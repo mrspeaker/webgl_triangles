@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<style>
+		body {
+			margin: 0;
+			background-color: #151515;
+		}
+	</style>
+</head>
+<body>
+	<script id="vertex-shader" type="x-shader/x-vertex">
+	attribute vec3 position;
+	uniform mat4 mvMatrix;
+	uniform mat4 projection;
+
+	varying vec3 vpos;
+
+	void main() {
+		vpos = position;
+	  	gl_Position = projection * mvMatrix * vec4(position, 1.0);
+	  	gl_PointSize = 12.0 + position.z;
+	}
+	</script>
+
+	<script id="fragment-shader" type="x-shader/x-fragment">
+	#ifdef GL_ES
+	precision highp float;
+	#endif
+
+	varying vec3 vpos;
+
+	uniform float time;
+
+	void main() {
+		float depth = vpos.z;
+		float col = (4.0 * cos(vpos.x * gl_FragCoord.y + depth + time));
+		float col2 = (sin(vpos.y * gl_FragCoord.y * depth + time * 2.0));
+
+		col *= (0.5 / depth);
+		col2 *= (0.5 / depth);
+
+		gl_FragColor = vec4(mix(col, col2, 0.7), col - 0.4, sin(depth + time) ,1);
+	}
+	</script>
+	<canvas id="board"></canvas>
+	<script src="bullshitutils.js"></script>
+	<script src="index.js"></script>
+</body>
+</html>
