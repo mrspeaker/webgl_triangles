@@ -2,6 +2,7 @@ var dom = document.querySelector("#board"),
 	c = dom.getContext("webgl") || dom.getContext("experimental-webgl"),
 	transitioning = 0;
 
+// Handle screen resize
 function onResize () {
 	dom.width = window.innerWidth;
 	dom.height = window.innerHeight;
@@ -10,6 +11,7 @@ function onResize () {
 onResize();
 window.addEventListener("resize", onResize, false);
 
+// Add timer to morph the points (or onclick)
 function morphPoints () {
 	randomisePoints(points2);
 	transitioning = 500;
@@ -17,6 +19,7 @@ function morphPoints () {
 window.addEventListener("mousedown", morphPoints, false);
 setInterval(morphPoints, 6000);
 
+// Grab the shaders
 var vs_text = document.querySelector("#vertex-shader").textContent,
 	fs_text = document.querySelector("#fragment-shader").textContent;
 
@@ -53,16 +56,7 @@ if (!c.getProgramParameter(program, c.LINK_STATUS)) {
 var buffer = c.createBuffer(),
 	points = new Float32Array(Math.pow(3, 7)),
 	points2 = new Float32Array(points.length);
-/*var z = -12;
-points = new Float32Array([
-		-1.0, -1.0, z, 
-		1.0, -1.0, z,
-		-1.0, 1.0, z,
-		1.0, -1.0, z + 2, 
-		1.0, 1.0, z + 2,  
-		-1.0, 1.0, z + 2
-	])
-*/
+
 function randomisePoints(points) {
 	for (var i = 0; i < points.length; i += 3) {
 		points[i] = Math.random() * 2 - 2;
@@ -79,6 +73,7 @@ c.enable(c.DEPTH_TEST);
 c.depthFunc(c.LEQUAL);
 c.clear(c.COLOR_BUFFER_BIT | c.DEPTH_BUFFER_BIT);
 
+// Some helpers for the main loop
 var vertexPositionAttribute,
 	startTime = Date.now() - (Math.random() * (1000 * 60) | 0),
 	now = 0,
@@ -120,6 +115,7 @@ function loop () {
 	]);
   	c.uniformMatrix4fv(mvUniform, false, new Float32Array(mvMatrix.flatten()));
 
+  	// Do morphing
   	if (transitioning-- > 0) {
   		for (var i = 0; i < points.length; i++) {
   			var a = points[i],
