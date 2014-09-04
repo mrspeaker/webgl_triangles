@@ -67,8 +67,8 @@ function randomisePoints(points) {
 randomisePoints(points);
 
 // RESET STUFF
-c.clearColor(0.1, 0.1, 0.1, 1.0);
-c.clearDepth(1.0);
+//c.clearColor(0.1, 0.1, 0.1, 1.0);
+//c.clearDepth(1.0);
 c.enable(c.DEPTH_TEST);
 c.depthFunc(c.LEQUAL);
 c.clear(c.COLOR_BUFFER_BIT | c.DEPTH_BUFFER_BIT);
@@ -81,7 +81,7 @@ var vertexPositionAttribute,
   		mvMatrix = mvMatrix.x(m);
 	},
 	mvTranslate = function (v) {
-  		multMatrix(Matrix.Translation($V([v[0], v[1], v[2]])).ensure4x4());
+  		multMatrix(Matrix.Translation($V([v[0], v[1], v[2]])));
 	};
 	
 // Only need to bind when geom changes.
@@ -93,7 +93,7 @@ c.useProgram(program);
 c.vertexAttribPointer(vertexPositionAttribute, 3, c.FLOAT, false, 0, 0);
 
 // Camera & project matrices
-var pMatrix = makePerspective(45, 640.0 / 480.0, 0.1, 100.0),
+var pMatrix = glUtils.makePerspective(45, 640.0 / 480.0, 0.1, 100.0),
 	mvMatrix = Matrix.I(4),
 	pUniform = c.getUniformLocation(program, "projection"),
 	mvUniform = c.getUniformLocation(program, "mvMatrix");
