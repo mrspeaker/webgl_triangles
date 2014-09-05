@@ -14,15 +14,22 @@
 <body>
 	<script id="vertex-shader" type="x-shader/x-vertex">
 	attribute vec3 position;
+	attribute vec2 aTexCoord;
+
 	uniform mat4 mvMatrix;
 	uniform mat4 projection;
 
+	uniform float time;
+
 	varying vec3 vpos;
+	varying vec2 vTexCoord;
 
 	void main() {
 		vpos = position;
-	  	gl_Position = projection * mvMatrix * vec4(position, 1.0);
-	  	gl_PointSize = 12.0 + position.z;
+		vpos.z = vpos.z + sin(time);
+		vTexCoord = aTexCoord;
+	  	gl_Position = projection * mvMatrix * vec4(vpos, 1.0);
+	  	// gl_PointSize = 12.0 + vpos.z;
 	}
 	</script>
 
@@ -32,6 +39,9 @@
 	#endif
 
 	varying vec3 vpos;
+	varying vec2 vTexCoord;
+
+	uniform sampler2D u_image;
 
 	uniform float time;
 
@@ -43,10 +53,13 @@
 		col *= (0.5 / depth);
 		col2 *= (0.5 / depth);
 
-		gl_FragColor = vec4(mix(col, col2, 0.7), col - 0.4, sin(depth + time) ,1);
+		vec4 finalcol = vec4(mix(col, col2, 0.7), col - 0.4, sin(depth + time), 1.0);
+
+		gl_FragColor =  mix(texture2D(u_image, vTexCoord), finalcol, 0.9);
 	}
 	</script>
 	<canvas id="board"></canvas>
+	<img id="tex" src="texture1.jpg" style="display:none" />
 	<script src="lib/sylvestor-matrix.js"></script>
 	<script src="lib/gl-utils.js"></script>
 	<script src="index.js"></script>

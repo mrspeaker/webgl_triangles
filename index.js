@@ -56,14 +56,13 @@ if (!c.getProgramParameter(program, c.LINK_STATUS)) {
 var buffer = c.createBuffer(),
 	points = new Float32Array(Math.pow(3, 7)),
 	points2 = new Float32Array(points.length);
-
-function randomisePoints(points) {
-	for (var i = 0; i < points.length; i += 3) {
-		points[i] = Math.random() * 2 - 2;
-		points[i+1] = Math.random() * 2 - 1;
-		points[i+2] = 0 - (Math.random() * 11 + 2)
-	}
-}
+	randomisePoints = function (points) {
+		for (var i = 0; i < points.length; i += 3) {
+			points[i] = Math.random() * 2 - 2;
+			points[i+1] = Math.random() * 2 - 1;
+			points[i+2] = 0 - (Math.random() * 11 + 2)
+		}
+	};
 randomisePoints(points);
 
 // RESET STUFF
@@ -90,7 +89,6 @@ c.bufferData(c.ARRAY_BUFFER, points, c.STATIC_DRAW);
 
 // Only one program, so set it out here.
 c.useProgram(program);
-c.vertexAttribPointer(vertexPositionAttribute, 3, c.FLOAT, false, 0, 0);
 
 // Camera & project matrices
 var pMatrix = glUtils.makePerspective(45, 640.0 / 480.0, 0.1, 100.0),
@@ -99,7 +97,21 @@ var pMatrix = glUtils.makePerspective(45, 640.0 / 480.0, 0.1, 100.0),
 	mvUniform = c.getUniformLocation(program, "mvMatrix");
 
 c.uniformMatrix4fv(pUniform, false, new Float32Array(pMatrix.flatten()));
-	
+
+var texture = c.createTexture(),
+	texCoordAttribute,
+	image = document.getElementById("tex");
+c.bindTexture(c.TEXTURE_2D, texture);
+
+// Set the parameters so we can render any size image.
+//c.texParameteri(c.TEXTURE_2D, c.TEXTURE_WRAP_S, c.CLAMP_TO_EDGE);
+//c.texParameteri(c.TEXTURE_2D, c.TEXTURE_WRAP_T, c.CLAMP_TO_EDGE);
+c.texParameteri(c.TEXTURE_2D, c.TEXTURE_MIN_FILTER, c.NEAREST);
+c.texParameteri(c.TEXTURE_2D, c.TEXTURE_MAG_FILTER, c.NEAREST);
+
+// Upload the image into the texture.
+c.texImage2D(c.TEXTURE_2D, 0, c.RGBA, c.RGBA, c.UNSIGNED_BYTE, image);
+
 // RENDER
 function loop () {
 	// Set Time
@@ -129,9 +141,15 @@ function loop () {
 		c.bufferData(c.ARRAY_BUFFER, points, c.STATIC_DRAW);
   	}
 
-	// Why enable/disable pos attrib? Still works if set once.
+	texCoordAttribute = c.getAttribLocation(program, "aTexCoord");
+	c.vertexAttribPointer(texCoordAttribute, 2, c.FLOAT, false, 0, 0);
+	c.enableVertexAttribArray(texCoordAttribute);
+
+	c.vertexAttribPointer(vertexPositionAttribute, 3, c.FLOAT, false, 0, 0);
 	c.enableVertexAttribArray(vertexPositionAttribute);
 	c.drawArrays(c.TRIANGLES, 0, points.length / 3);
+	
+	c.disableVertexAttribArray(texCoordAttribute);
 	c.disableVertexAttribArray(vertexPositionAttribute);
 
 	requestAnimationFrame(loop);
