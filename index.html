@@ -55,7 +55,7 @@
 
 		vec4 finalcol = vec4(mix(col, col2, 0.7), col - 0.4, sin(depth + time), 1.0);
 
-		gl_FragColor =  mix(texture2D(u_image, vTexCoord), finalcol, 0.9);
+		gl_FragColor =  mix(texture2D(u_image, vTexCoord), finalcol, abs(sin(time / 100.)));
 	}
 	</script>
 	<canvas id="board"></canvas>

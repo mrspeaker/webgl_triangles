@@ -57,13 +57,34 @@ var buffer = c.createBuffer(),
 	points = new Float32Array(Math.pow(3, 7)),
 	points2 = new Float32Array(points.length);
 	randomisePoints = function (points) {
+		var ts = 0;
 		for (var i = 0; i < points.length; i += 3) {
-			points[i] = Math.random() * 2 - 2;
-			points[i+1] = Math.random() * 2 - 1;
-			points[i+2] = 0 - (Math.random() * 11 + 2)
+			var rs = randSphere();
+			points[i] = rs.x;
+			points[i + 1] = rs.y;
+			points[i + 2] = rs.z - 6;
+			
+			// points[i] = Math.random() * 2 - 2;
+			// points[i+1] = Math.random() * 2 - 1;
+			// points[i+2] = 0 - (Math.random() * 11 + 2)
 		}
 	};
 randomisePoints(points);
+
+function randSphere() {
+	var x, y z, k = 0;
+	while (k < 0.2 || k > 0.3) {
+		x = Math.random() - 0.5;
+		y = Math.random() - 0.5;
+		z = Math.random() - 0.5;
+		k = Math.sqrt(x * x + y * y + z * z);
+	}
+	return { 
+		x: x / k, 
+		y: y / k, 
+		z: z / k 
+	};
+}
 
 // RESET STUFF
 //c.clearColor(0.1, 0.1, 0.1, 1.0);
