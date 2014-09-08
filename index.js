@@ -72,7 +72,7 @@ var buffer = c.createBuffer(),
 randomisePoints(points);
 
 function randSphere() {
-	var x, y z, k = 0;
+	var x, y, z, k = 0;
 	while (k < 0.2 || k > 0.3) {
 		x = Math.random() - 0.5;
 		y = Math.random() - 0.5;

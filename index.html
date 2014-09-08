@@ -53,9 +53,15 @@
 		col *= (0.5 / depth);
 		col2 *= (0.5 / depth);
 
-		vec4 finalcol = vec4(mix(col, col2, 0.7), col - 0.4, sin(depth + time), 1.0);
+		vec4 fog_color = vec4(0.13, 0.13, 0.03, 1.0);
+		float fog_end = 7.0;
+		float fog_coord = clamp(abs(vpos.z), 0.0, fog_end);
+		float fog = clamp((fog_end - fog_coord) / fog_end, 0.0, 1.0);
+		//gl_FragColor = mix(fog_color, finalcol, fog);
 
-		gl_FragColor =  mix(texture2D(u_image, vTexCoord), finalcol, abs(sin(time / 100.)));
+		vec4 finalcol = vec4(mix(col, col2, 0.7), col - 0.4, sin(depth + time), 1.0);
+		vec4 veryfinal = mix(texture2D(u_image, vTexCoord), finalcol, abs(sin(time / 100.)));
+		gl_FragColor =  mix(fog_color, veryfinal, fog);
 	}
 	</script>
 	<canvas id="board"></canvas>
