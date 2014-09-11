@@ -57,16 +57,20 @@ var buffer = c.createBuffer(),
 	points = new Float32Array(Math.pow(3, 7)),
 	points2 = new Float32Array(points.length);
 	randomisePoints = function (points) {
-		var ts = 0;
+		var isSphere = Math.random() < 0.3;
 		for (var i = 0; i < points.length; i += 3) {
+
+			if (isSphere) {
+				var rs = randSphere();
+				points[i] = rs.x;
+				points[i + 1] = rs.y;
+				points[i + 2] = rs.z - 6;
+				continue;
+			}
+			
 			points[i] = Math.random() * 2 - 2;
 			points[i+1] = Math.random() * 2 - 1;
 			points[i+2] = 0 - (Math.random() * 11 + 2);
-			
-			//var rs = randSphere();
-			//points[i] = rs.x;
-			//points[i + 1] = rs.y;
-			//points[i + 2] = rs.z - 6;
 		}
 	};
 randomisePoints(points);
@@ -87,11 +91,10 @@ function randSphere() {
 }
 
 // RESET STUFF
-//c.clearColor(0.1, 0.1, 0.1, 1.0);
-//c.clearDepth(1.0);
+c.clearColor(0.1, 0.1, 0.1, 1.0);
+c.clearDepth(1.0);
 c.enable(c.DEPTH_TEST);
 c.depthFunc(c.LEQUAL);
-c.clear(c.COLOR_BUFFER_BIT | c.DEPTH_BUFFER_BIT);
 
 // Some helpers for the main loop
 var vertexPositionAttribute,
@@ -122,6 +125,7 @@ c.uniformMatrix4fv(pUniform, false, new Float32Array(pMatrix.flatten()));
 var texture = c.createTexture(),
 	texCoordAttribute,
 	image = document.getElementById("tex");
+
 c.bindTexture(c.TEXTURE_2D, texture);
 
 // Set the parameters so we can render any size image.
@@ -135,6 +139,8 @@ c.texImage2D(c.TEXTURE_2D, 0, c.RGBA, c.RGBA, c.UNSIGNED_BYTE, image);
 
 // RENDER
 function loop () {
+	c.clear(c.COLOR_BUFFER_BIT | c.DEPTH_BUFFER_BIT); // Should this be in loop?
+
 	// Set Time
 	now = Date.now() - startTime;
 	c.uniform1f(c.getUniformLocation(program, "time"), now / 1000);

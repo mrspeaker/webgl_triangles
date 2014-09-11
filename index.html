@@ -41,8 +41,7 @@
 	varying vec3 vpos;
 	varying vec2 vTexCoord;
 
-	uniform sampler2D u_image;
-
+	uniform sampler2D uImage;
 	uniform float time;
 
 	void main() {
@@ -53,15 +52,9 @@
 		col *= (0.5 / depth);
 		col2 *= (0.5 / depth);
 		vec4 sinCol = vec4(mix(col, col2, 0.7), col - 0.4, sin(depth + time), 1.0);
-		vec4 texedCol = mix(texture2D(u_image, vTexCoord), sinCol, abs(sin(time / 100.)));
+		vec4 texedCol = mix(texture2D(uImage, vTexCoord), sinCol, abs(sin(time / 100.)));
 		
-		// Calculate
-		vec4 fog_color = vec4(0.13, 0.13, 0.03, 1.0);
-		float fog_end = 7.0;
-		float fog_coord = clamp(abs(vpos.z), 0.0, fog_end);
-		float fog = clamp((fog_end - fog_coord) / fog_end, 0.0, 1.0);
-
-		gl_FragColor = texedCol; // mix(fog_color, texedCol, fog);
+		gl_FragColor = texedCol;
 	}
 	</script>
 	<canvas id="board"></canvas>
