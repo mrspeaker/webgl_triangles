@@ -52,21 +52,21 @@ if (!c.getProgramParameter(program, c.LINK_STATUS)) {
 	console.error("error linking program", c.getProgramParameter(program, c.VALIDATE_STATUS), c.getError());
 }
 
-// SET UP GEOMETRY
+// SET UP SOME GEOMETRY
 var buffer = c.createBuffer(),
 	points = new Float32Array(Math.pow(3, 7)),
 	points2 = new Float32Array(points.length);
 	randomisePoints = function (points) {
 		var ts = 0;
 		for (var i = 0; i < points.length; i += 3) {
-			var rs = randSphere();
-			points[i] = rs.x;
-			points[i + 1] = rs.y;
-			points[i + 2] = rs.z - 6;
+			points[i] = Math.random() * 2 - 2;
+			points[i+1] = Math.random() * 2 - 1;
+			points[i+2] = 0 - (Math.random() * 11 + 2);
 			
-			// points[i] = Math.random() * 2 - 2;
-			// points[i+1] = Math.random() * 2 - 1;
-			// points[i+2] = 0 - (Math.random() * 11 + 2)
+			//var rs = randSphere();
+			//points[i] = rs.x;
+			//points[i + 1] = rs.y;
+			//points[i + 2] = rs.z - 6;
 		}
 	};
 randomisePoints(points);
@@ -169,6 +169,7 @@ function loop () {
 	c.vertexAttribPointer(vertexPositionAttribute, 3, c.FLOAT, false, 0, 0);
 	c.enableVertexAttribArray(vertexPositionAttribute);
 	c.drawArrays(c.TRIANGLES, 0, points.length / 3);
+	//c.drawElements(c.TRIANGLES, points.length / 3, c.UNSIGNED_SHORT, 0);
 	
 	c.disableVertexAttribArray(texCoordAttribute);
 	c.disableVertexAttribArray(vertexPositionAttribute);

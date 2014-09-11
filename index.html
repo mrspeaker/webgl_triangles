@@ -29,7 +29,7 @@
 		vpos.z = vpos.z + sin(time);
 		vTexCoord = aTexCoord;
 	  	gl_Position = projection * mvMatrix * vec4(vpos, 1.0);
-	  	// gl_PointSize = 12.0 + vpos.z;
+		// gl_PointSize = 12.0 + vpos.z;
 	}
 	</script>
 
@@ -52,16 +52,16 @@
 
 		col *= (0.5 / depth);
 		col2 *= (0.5 / depth);
-
+		vec4 sinCol = vec4(mix(col, col2, 0.7), col - 0.4, sin(depth + time), 1.0);
+		vec4 texedCol = mix(texture2D(u_image, vTexCoord), sinCol, abs(sin(time / 100.)));
+		
+		// Calculate
 		vec4 fog_color = vec4(0.13, 0.13, 0.03, 1.0);
 		float fog_end = 7.0;
 		float fog_coord = clamp(abs(vpos.z), 0.0, fog_end);
 		float fog = clamp((fog_end - fog_coord) / fog_end, 0.0, 1.0);
-		//gl_FragColor = mix(fog_color, finalcol, fog);
 
-		vec4 finalcol = vec4(mix(col, col2, 0.7), col - 0.4, sin(depth + time), 1.0);
-		vec4 veryfinal = mix(texture2D(u_image, vTexCoord), finalcol, abs(sin(time / 100.)));
-		gl_FragColor =  mix(fog_color, veryfinal, fog);
+		gl_FragColor = texedCol; // mix(fog_color, texedCol, fog);
 	}
 	</script>
 	<canvas id="board"></canvas>
